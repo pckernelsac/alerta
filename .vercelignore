@@ -1,0 +1,17 @@
+# Python virtualenv
+backend/.venv/
+backend/venv/
+
+# Node modules (frontend installs in buildCommand)
+frontend/node_modules/
+
+# Local env files
+.env
+backend/.env
+frontend/.env
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.log
