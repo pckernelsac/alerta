@@ -12,7 +12,7 @@ Este proyecto queda listo para desplegar en EasyPanel con el archivo `docker-com
 
 En el servicio `backend`, reemplaza como minimo:
 
-- `DATABASE_URL=postgresql://postgres:postgres@db:5432/conce`
+- `DATABASE_URL=postgres://postgres:jce29xl4hnfe56ne5jzn@conce_bd-alerta:5432/conce?sslmode=disable`
 - `JWT_SECRET=<un-secreto-largo-y-unico>`
 - `CORS_ORIGINS=https://tu-dominio.com`
 
@@ -24,14 +24,16 @@ Si publicas frontend y backend en el mismo dominio (recomendado), deja:
 
 El compose ya incluye:
 
-- `postgres_data` para base de datos.
 - `backend_uploads` para fotos subidas en `/uploads`.
 
 ## 4) Inicializar esquema
 
-La primera vez que se levanta `db`, Postgres ejecuta automaticamente:
+Como usas PostgreSQL externo (`conce_bd-alerta`), ejecuta una vez:
 
-- `backend/sql/init_concepcion.sql`
+```bash
+psql "postgres://postgres:jce29xl4hnfe56ne5jzn@conce_bd-alerta:5432/conce?sslmode=disable" \
+  -f backend/sql/init_concepcion.sql
+```
 
 Si quieres crear/actualizar admin:
 

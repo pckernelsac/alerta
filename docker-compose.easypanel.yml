@@ -1,35 +1,14 @@
 services:
-  db:
-    image: postgres:16-alpine
-    container_name: alerta-concepcion-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: conce
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./backend/sql/init_concepcion.sql:/docker-entrypoint-initdb.d/01_init_concepcion.sql:ro
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d conce"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: alerta-concepcion-backend
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
       APP_HOST: 0.0.0.0
       APP_PORT: 8000
       CORS_ORIGINS: "*"
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/conce
+      DATABASE_URL: postgres://postgres:jce29xl4hnfe56ne5jzn@conce_bd-alerta:5432/conce?sslmode=disable
       JWT_SECRET: alerta-concepcion-secret-change-me
       JWT_ALGORITHM: HS256
       JWT_EXPIRE_DAYS: 7
@@ -47,7 +26,6 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: /api
-    container_name: alerta-concepcion-frontend
     restart: unless-stopped
     depends_on:
       backend:
@@ -56,6 +34,5 @@ services:
       - "8080:80"
 
 volumes:
-  postgres_data:
   backend_uploads:
 
