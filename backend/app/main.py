@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
@@ -44,7 +45,19 @@ def health() -> dict[str, str]:
 
 frontend_dist = Path("frontend_dist")
 if frontend_dist.exists():
-    app.mount("/", StaticFiles(directory=str(frontend_dist), html=True), name="frontend")
+    app.mount("/assets", StaticFiles(directory=str(frontend_dist / "assets")), name="assets")
+
+    @app.get("/")
+    def serve_frontend_root() -> FileResponse:
+        return FileResponse(frontend_dist / "index.html")
+
+    @app.get("/{full_path:path}")
+    def serve_frontend(full_path: str) -> FileResponse:
+        # SPA fallback: serve built file if it exists, otherwise index.html.
+        target = frontend_dist / full_path
+        if target.is_file():
+            return FileResponse(target)
+        return FileResponse(frontend_dist / "index.html")
 else:
     @app.get("/")
     def root() -> dict[str, str]:
