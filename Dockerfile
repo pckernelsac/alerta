@@ -3,7 +3,7 @@ FROM node:22-alpine AS frontend-build
 WORKDIR /frontend
 
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 COPY frontend/. .
 ARG VITE_API_URL=/api
