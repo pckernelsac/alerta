@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 from app.config import get_settings
 from app.routes.admin import router as admin_router
@@ -31,12 +32,6 @@ app.include_router(upload_router)
 app.include_router(admin_router)
 app.mount("/uploads", StaticFiles(directory="uploads", check_dir=False), name="uploads")
 
-
-@app.get("/")
-def root() -> dict[str, str]:
-    return {"service": "alerta-concepcion-api", "status": "ok"}
-
-
 @app.get("/health")
 def health_root() -> dict[str, str]:
     return {"status": "ok"}
@@ -45,6 +40,15 @@ def health_root() -> dict[str, str]:
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+frontend_dist = Path("frontend_dist")
+if frontend_dist.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_dist), html=True), name="frontend")
+else:
+    @app.get("/")
+    def root() -> dict[str, str]:
+        return {"service": "alerta-concepcion-api", "status": "ok"}
 
 
 def _run() -> None:
