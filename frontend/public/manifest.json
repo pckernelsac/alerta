@@ -1,7 +1,7 @@
 {
-  "name": "Alerta Satipo",
-  "short_name": "Alerta Satipo",
-  "description": "Aplicación de alertas — Alerta Satipo",
+  "name": "Alerta Concepcion",
+  "short_name": "Alerta Concepcion",
+  "description": "Aplicación de alertas — Alerta Concepcion",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

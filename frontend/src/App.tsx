@@ -7,6 +7,7 @@ import { DashboardPage } from "./pages/DashboardPage.tsx";
 import { HomePage } from "./pages/HomePage.tsx";
 import { LoginPage } from "./pages/LoginPage.tsx";
 import { RegisterPage } from "./pages/RegisterPage.tsx";
+import { ReportPage } from "./pages/ReportPage.tsx";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         {/* Protegidas — usuario autenticado */}
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/reportar/:tipo" element={<ReportPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
         </Route>
 

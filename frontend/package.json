@@ -1,5 +1,5 @@
 {
-  "name": "alerta-satipo-frontend",
+  "name": "alerta-concepcion-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,6 @@
     "build:preview": "npm run build && vite preview --host"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.101.1",
     "leaflet": "^1.9.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

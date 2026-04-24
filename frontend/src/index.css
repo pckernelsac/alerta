@@ -9,10 +9,17 @@ body,
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
+  background: #f8fafc;
+  color: #1e293b;
 }
 
 .leaflet-container {
   height: 100%;
   width: 100%;
-  background: #0f172a;
+  background: #e2e8f0;
+}
+
+/* Custom border-b-3 for active tabs */
+.border-b-3 {
+  border-bottom-width: 3px;
 }

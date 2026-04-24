@@ -27,15 +27,18 @@ export function LoginPage() {
   );
 
   return (
-    <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-slate-950 px-4 py-8 text-slate-100">
+    <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-gradient-to-b from-emerald-50 to-slate-50 px-4 py-8">
       <form
         onSubmit={(e) => void handleSubmit(e)}
-        className="w-full max-w-sm space-y-5"
+        className="w-full max-w-sm space-y-5 rounded-2xl border border-slate-200 bg-white p-8 shadow-lg"
       >
-        <h1 className="text-center text-2xl font-bold">Iniciar sesión</h1>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-slate-800">Alerta Concepcion</h1>
+          <p className="mt-1 text-sm text-slate-500">Inicia sesión para continuar</p>
+        </div>
 
-        <div className="space-y-2">
-          <label htmlFor="email" className="block text-sm text-slate-300">
+        <div className="space-y-1.5">
+          <label htmlFor="email" className="block text-sm font-medium text-slate-700">
             Correo electrónico
           </label>
           <input
@@ -45,12 +48,13 @@ export function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 disabled:opacity-50"
+            className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
+            placeholder="tu@correo.com"
           />
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="password" className="block text-sm text-slate-300">
+        <div className="space-y-1.5">
+          <label htmlFor="password" className="block text-sm font-medium text-slate-700">
             Contraseña
           </label>
           <input
@@ -61,12 +65,13 @@ export function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
-            className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-slate-100 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 disabled:opacity-50"
+            className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
+            placeholder="••••••"
           />
         </div>
 
         {error && (
-          <p className="rounded-xl border border-red-800/60 bg-red-950/40 px-4 py-3 text-center text-sm text-red-200">
+          <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-700">
             {error}
           </p>
         )}
@@ -74,16 +79,16 @@ export function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-2xl bg-red-600 px-6 py-4 text-lg font-semibold text-white shadow-lg shadow-red-900/40 transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-2xl bg-emerald-600 px-6 py-4 text-lg font-semibold text-white shadow-md shadow-emerald-200 transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? "Ingresando..." : "Ingresar"}
         </button>
 
-        <p className="text-center text-sm text-slate-400">
+        <p className="text-center text-sm text-slate-500">
           ¿No tienes cuenta?{" "}
           <Link
             to="/registro"
-            className="text-red-400 underline-offset-2 hover:text-red-300 hover:underline"
+            className="font-medium text-emerald-600 underline-offset-2 hover:text-emerald-700 hover:underline"
           >
             Regístrate
           </Link>

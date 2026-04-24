@@ -1,19 +1,50 @@
-"""Dependencias FastAPI para autenticación y autorización."""
+"""Auth propio: JWT + bcrypt."""
 
+from datetime import datetime, timedelta, timezone
+
+import bcrypt
+import jwt
 from fastapi import HTTPException, Request
 
-from app.services.supabase import get_supabase
+from app.config import get_settings
 
 
 class AuthUser:
-    """Datos mínimos del usuario autenticado."""
-
     __slots__ = ("id", "email", "role")
 
     def __init__(self, id: str, email: str, role: str = "user"):
         self.id = id
         self.email = email
         self.role = role
+
+
+def hash_password(password: str) -> str:
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+
+def verify_password(password: str, hashed: str) -> bool:
+    return bcrypt.checkpw(password.encode(), hashed.encode())
+
+
+def create_token(user_id: str, email: str, role: str) -> str:
+    s = get_settings()
+    payload = {
+        "sub": user_id,
+        "email": email,
+        "role": role,
+        "exp": datetime.now(timezone.utc) + timedelta(days=s.jwt_expire_days),
+    }
+    return jwt.encode(payload, s.jwt_secret, algorithm=s.jwt_algorithm)
+
+
+def _decode_token(token: str) -> dict:
+    s = get_settings()
+    try:
+        return jwt.decode(token, s.jwt_secret, algorithms=[s.jwt_algorithm])
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expirado.")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Token inválido.")
 
 
 def _extract_token(request: Request) -> str:
@@ -23,39 +54,18 @@ def _extract_token(request: Request) -> str:
     return auth_header.split(" ", 1)[1]
 
 
-def _verify_user(token: str) -> AuthUser:
-    sb = get_supabase()
-    try:
-        resp = sb.auth.get_user(token)
-        user = resp.user
-        if not user:
-            raise HTTPException(status_code=401, detail="Token inválido.")
-
-        # Obtener rol desde profiles
-        result = (
-            sb.table("profiles")
-            .select("role")
-            .eq("id", str(user.id))
-            .single()
-            .execute()
-        )
-        role = result.data.get("role", "user") if result.data else "user"
-
-        return AuthUser(id=str(user.id), email=user.email or "", role=role)
-    except HTTPException:
-        raise
-    except Exception:
-        raise HTTPException(status_code=401, detail="Token inválido o expirado.")
-
-
 def get_current_user(request: Request) -> AuthUser:
     token = _extract_token(request)
-    return _verify_user(token)
+    payload = _decode_token(token)
+    return AuthUser(
+        id=payload["sub"],
+        email=payload.get("email", ""),
+        role=payload.get("role", "user"),
+    )
 
 
 def get_admin_user(request: Request) -> AuthUser:
-    token = _extract_token(request)
-    user = _verify_user(token)
+    user = get_current_user(request)
     if user.role != "admin":
         raise HTTPException(status_code=403, detail="Acceso solo para administradores.")
     return user

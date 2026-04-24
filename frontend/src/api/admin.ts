@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabase.ts";
+import { getStoredToken } from "./auth.ts";
 import { getApiBase } from "./denuncia.ts";
 
 export type DenunciaAdmin = {
@@ -21,10 +21,9 @@ export type AdminStats = {
   resueltas: number;
 };
 
-async function adminHeaders(): Promise<Record<string, string>> {
-  const { data } = await supabase.auth.getSession();
-  const token = data.session?.access_token;
-  if (!token) throw new Error("Sesión expirada.");
+function adminHeaders(): Record<string, string> {
+  const token = getStoredToken();
+  if (!token) throw new Error("Sesion expirada.");
   return {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
@@ -41,7 +40,7 @@ export async function fetchDenunciasAdmin(
   const qs = params.toString();
 
   const res = await fetch(`${base}/admin/denuncias${qs ? `?${qs}` : ""}`, {
-    headers: await adminHeaders(),
+    headers: adminHeaders(),
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -50,14 +49,11 @@ export async function fetchDenunciasAdmin(
   return (await res.json()) as DenunciaAdmin[];
 }
 
-export async function updateEstado(
-  denunciaId: string,
-  estado: string,
-): Promise<void> {
+export async function updateEstado(denunciaId: string, estado: string): Promise<void> {
   const base = getApiBase();
   const res = await fetch(`${base}/admin/denuncias/${denunciaId}`, {
     method: "PATCH",
-    headers: await adminHeaders(),
+    headers: adminHeaders(),
     body: JSON.stringify({ estado }),
   });
   if (!res.ok) {
@@ -68,9 +64,7 @@ export async function updateEstado(
 
 export async function fetchAdminStats(): Promise<AdminStats> {
   const base = getApiBase();
-  const res = await fetch(`${base}/admin/stats`, {
-    headers: await adminHeaders(),
-  });
+  const res = await fetch(`${base}/admin/stats`, { headers: adminHeaders() });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     throw new Error((body as { detail?: string }).detail ?? `Error ${res.status}`);
@@ -81,9 +75,7 @@ export async function fetchAdminStats(): Promise<AdminStats> {
 export async function checkIsAdmin(): Promise<boolean> {
   const base = getApiBase();
   try {
-    const res = await fetch(`${base}/admin/me`, {
-      headers: await adminHeaders(),
-    });
+    const res = await fetch(`${base}/admin/me`, { headers: adminHeaders() });
     return res.ok;
   } catch {
     return false;

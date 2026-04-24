@@ -1,4 +1,4 @@
-"""Configuración centralizada (entorno de la app y Supabase)."""
+"""Configuración centralizada."""
 
 from functools import lru_cache
 
@@ -14,19 +14,17 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    app_host: str = Field(default="0.0.0.0", description="Host de uvicorn")
+    app_host: str = Field(default="0.0.0.0")
     app_port: int = Field(default=8000, ge=1, le=65535)
-    cors_origins: str = Field(
-        default="*",
-        description="Orígenes CORS separados por coma, o * para todos",
+    cors_origins: str = Field(default="*")
+
+    database_url: str = Field(
+        default="postgres://postgres:jce29xl4hnfe56ne5jzn@conce_bd-alerta:5432/conce?sslmode=disable"
     )
 
-    supabase_url: str = Field(default="", description="URL del proyecto Supabase")
-    supabase_anon_key: str = Field(default="", description="Clave anon")
-    supabase_service_role_key: str = Field(
-        default="",
-        description="Clave service_role (solo backend)",
-    )
+    jwt_secret: str = Field(default="alerta-concepcion-secret-change-me")
+    jwt_algorithm: str = Field(default="HS256")
+    jwt_expire_days: int = Field(default=7)
 
     def cors_origins_list(self) -> list[str]:
         raw = self.cors_origins.strip()

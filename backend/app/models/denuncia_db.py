@@ -1,4 +1,4 @@
-"""Modelo de denuncia persistida (tabla denuncias en Supabase / Postgres)."""
+"""Modelo de denuncia persistida (tabla denuncias en PostgreSQL)."""
 
 from datetime import datetime
 from enum import StrEnum
