@@ -32,6 +32,16 @@ app.include_router(admin_router)
 app.mount("/uploads", StaticFiles(directory="uploads", check_dir=False), name="uploads")
 
 
+@app.get("/")
+def root() -> dict[str, str]:
+    return {"service": "alerta-concepcion-api", "status": "ok"}
+
+
+@app.get("/health")
+def health_root() -> dict[str, str]:
+    return {"status": "ok"}
+
+
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
